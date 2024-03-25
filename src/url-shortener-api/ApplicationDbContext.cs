@@ -16,7 +16,7 @@ public class ApplicationDbContext : DbContext
     {
         modelBuilder.Entity<ShortnedUrl>().HasKey(e => e.Id);
         modelBuilder.Entity<ShortnedUrl>().Property(e => e.OriginalUrl).IsRequired();
-        modelBuilder.Entity<ShortnedUrl>().Property(e => e.ShortenedUrl).IsRequired();
+        modelBuilder.Entity<ShortnedUrl>().Property(e => e.ShortUrl).IsRequired();
         modelBuilder.Entity<ShortnedUrl>().Property(e => e.Code).IsRequired().HasMaxLength(UrlShorteningService.NUMBER_OF_CODE_CHARACTERS);
         modelBuilder.Entity<ShortnedUrl>().HasIndex(e => e.Code).IsUnique();
         modelBuilder.Entity<ShortnedUrl>().Property(e => e.CreatedAtUtc).IsRequired();
