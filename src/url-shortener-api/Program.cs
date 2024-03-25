@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using url_shortener_api;
 using url_shortener_api.Entities;
+using url_shortener_api.Extentions;
 using url_shortener_api.Models;
 using url_shortener_api.Services;
 
@@ -24,6 +25,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigration();
 }
 
 app.MapPost("/shorten", async (ShortenUrlRequest request,
