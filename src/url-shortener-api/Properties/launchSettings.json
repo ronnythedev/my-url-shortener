@@ -9,6 +9,13 @@
     }
   },
   "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "urlshortenerapi": "StartDebugging"
+      }
+    },
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,

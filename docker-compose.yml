@@ -1,0 +1,24 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+version: "3.4"
+
+services:
+  urlshortenerapi:
+    image: urlshortenerapi
+    container_name: UrlShortener.Api
+    build:
+      context: .
+      dockerfile: src/url-shortener-api/Dockerfile
+    ports:
+      - 5291:443
+
+  urlshortenerdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: UrlShortener.Db
+    volumes:
+      - ./.containers/database:/var/opt/mssql/data
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Strong_Password1234!"
