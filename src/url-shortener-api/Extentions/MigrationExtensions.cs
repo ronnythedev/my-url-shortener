@@ -4,11 +4,11 @@ namespace url_shortener_api.Extentions;
 
 public static class MigrationExtensions
 {
-    public static void ApplyMigration(this WebApplication app)
+    public static void ApplyMigration(this IApplicationBuilder app)
     {
-        using var scope = app.Services.CreateScope();
+        using var scope = app.ApplicationServices.CreateScope();
 
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        using ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         dbContext.Database.Migrate();
     }

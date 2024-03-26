@@ -3,10 +3,24 @@
 version: "3.4"
 
 services:
+  urlshortener-db:
+    image: ${DOCKER_REGISTRY-}postgres:latest
+    container_name: UrlShortener.Db
+    environment:
+      - POSTGRES_DB=UrlShortener
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/UrlShortener-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
   urlshortener-api:
     image: ${DOCKER_REGISTRY-}urlshortenerapi
     container_name: UrlShortener.Api
     platform: linux/amd64
+    depends_on:
+      - urlshortener-db
     build:
       context: .
       dockerfile: src/url-shortener-api/Dockerfile
@@ -15,18 +29,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-
-  urlshortener-db:
-    image: ${DOCKER_REGISTRY-}mcr.microsoft.com/mssql/server:2022-latest
-    container_name: UrlShortener.Db
-    platform: linux/amd64
-    volumes:
-      - ./.containers/database:/var/opt/mssql/data
-    ports:
-      - "1433:1433"
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Strong_Password1234!"
 
   urlshortener-cache:
     image: ${DOCKER_REGISTRY-}redis:latest

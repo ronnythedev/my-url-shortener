@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Database"));
 });
 
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -55,7 +55,7 @@ app.MapPost("/shorten", async (ShortenUrlRequest request,
         CreatedAtUtc = DateTime.UtcNow
     };
 
-    applicationDbContext.ShortnedUrls.Add(shortenedUrl);
+    applicationDbContext.Add(shortenedUrl);
 
     await applicationDbContext.SaveChangesAsync();
 
@@ -67,6 +67,7 @@ app.MapGet("/{code}", async (string code, ApplicationDbContext applicationDbCont
     var shortenedUrl = await cache.GetAsync(code, async token =>
     {
         var shortenedUrl = await applicationDbContext.ShortnedUrls
+            .AsNoTracking()
             .Where(x => x.Code == code)
             .FirstOrDefaultAsync(token);
 
