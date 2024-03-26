@@ -1,4 +1,6 @@
 
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using url_shortener_api;
@@ -23,6 +25,22 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 builder.Services.AddScoped<UrlShorteningService>();
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("fixed", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString(),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromSeconds(10)
+            }
+        ));
+});
+
 
 var app = builder.Build();
 
@@ -60,7 +78,8 @@ app.MapPost("/shorten", async (ShortenUrlRequest request,
     await applicationDbContext.SaveChangesAsync();
 
     return Results.Ok(shortenedUrl.ShortUrl);
-});
+
+}).RequireRateLimiting("fixed");
 
 app.MapGet("/{code}", async (string code, ApplicationDbContext applicationDbContext, IDistributedCache cache, CancellationToken ct) =>
 {
@@ -84,5 +103,7 @@ app.MapGet("/{code}", async (string code, ApplicationDbContext applicationDbCont
 });
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
 
 app.Run();
