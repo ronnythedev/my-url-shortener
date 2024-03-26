@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using url_shortener_api;
 using url_shortener_api.Entities;
 using url_shortener_api.Extentions;
@@ -18,11 +19,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration = builder.Configuration.GetConnectionString("Cache");
 });
 
 builder.Services.AddScoped<UrlShorteningService>();
-
 
 var app = builder.Build();
 
@@ -62,9 +62,17 @@ app.MapPost("/shorten", async (ShortenUrlRequest request,
     return Results.Ok(shortenedUrl.ShortUrl);
 });
 
-app.MapGet("/{code}", async (string code, ApplicationDbContext applicationDbContext) =>
+app.MapGet("/{code}", async (string code, ApplicationDbContext applicationDbContext, IDistributedCache cache, CancellationToken ct) =>
 {
-    var shortenedUrl = await applicationDbContext.ShortnedUrls.FirstOrDefaultAsync(x => x.Code == code);
+    var shortenedUrl = await cache.GetAsync(code, async token =>
+    {
+        var shortenedUrl = await applicationDbContext.ShortnedUrls
+            .Where(x => x.Code == code)
+            .FirstOrDefaultAsync(token);
+
+        return shortenedUrl;
+
+    }, CacheOptions.DefaultExpiration, ct);
 
     if (shortenedUrl == null)
     {
