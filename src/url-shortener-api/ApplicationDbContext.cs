@@ -14,11 +14,11 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ShortnedUrl>().HasKey(e => e.Id);
-        modelBuilder.Entity<ShortnedUrl>().Property(e => e.OriginalUrl).IsRequired();
-        modelBuilder.Entity<ShortnedUrl>().Property(e => e.ShortUrl).IsRequired();
-        modelBuilder.Entity<ShortnedUrl>().Property(e => e.Code).IsRequired().HasMaxLength(UrlShorteningService.NUMBER_OF_CODE_CHARACTERS);
-        modelBuilder.Entity<ShortnedUrl>().HasIndex(e => e.Code).IsUnique();
-        modelBuilder.Entity<ShortnedUrl>().Property(e => e.CreatedAtUtc).IsRequired();
+        modelBuilder.Entity<ShortnedUrl>(builder =>
+        {
+            builder.Property(s => s.Code).HasMaxLength(UrlShorteningService.NUMBER_OF_CODE_CHARACTERS);
+
+            builder.HasIndex(s => s.Code).IsUnique();
+        });
     }
 }
