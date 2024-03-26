@@ -4,16 +4,21 @@ version: "3.4"
 
 services:
   urlshortenerapi:
-    image: urlshortenerapi
+    image: ${DOCKER_REGISTRY-}urlshortenerapi
+    platform: linux/amd64
     container_name: UrlShortener.Api
     build:
       context: .
       dockerfile: src/url-shortener-api/Dockerfile
     ports:
-      - 5291:443
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
 
   urlshortenerdb:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: ${DOCKER_REGISTRY-}mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     container_name: UrlShortener.Db
     volumes:
       - ./.containers/database:/var/opt/mssql/data
@@ -22,3 +27,10 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "Strong_Password1234!"
+
+volumes:
+  urlshortener-db-data:
+
+networks:
+  default:
+    name: urlshortener-network

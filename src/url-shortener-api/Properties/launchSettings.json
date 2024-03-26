@@ -9,13 +9,6 @@
     }
   },
   "profiles": {
-    "Docker Compose": {
-      "commandName": "DockerCompose",
-      "commandVersion": "1.0",
-      "serviceActions": {
-        "urlshortenerapi": "StartDebugging"
-      }
-    },
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
@@ -43,6 +36,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "publishAllPorts": true,
+      "useSSL": false
     }
   }
 }

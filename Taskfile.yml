@@ -1,0 +1,28 @@
+version: '3'
+
+dotenv: ['.env']
+silent: true
+
+tasks:
+  boot:
+    cmds:
+      - docker-compose up -d --build
+
+  reboot:
+    cmds:
+      - docker-compose down --remove-orphans
+      - sleep 3
+      - task boot
+
+  reboot-remove-volumes:
+    cmds:
+      - task down
+      - task boot
+
+  up:
+    cmds:
+      - docker-compose up -d --build
+
+  down:
+    cmds:
+      - docker-compose down -v --remove-orphans
