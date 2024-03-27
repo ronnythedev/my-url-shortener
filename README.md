@@ -2,18 +2,28 @@
 
 WebApi to shorten large urls.
 
-Build with `VSCode` and the `C# DevKit` extension.
+To start it, run in console `task boot` or `docker-compose up -d --build`
 
-Since Docker projects are not supported by `C# DevKit` in `VSCode`, `Dockerfile` might look different than the ones created from VS; as well as the `docker-compose.yml` file.
+## Docker, VSCode & C# DevKit
+
+This project was build with `VSCode` and the `C# DevKit` extension.
+
+Since Docker projects are not supported by `C# DevKit` in `VSCode` out of the box, the `Dockerfile` might look different than the ones created from VS; as well as the `docker-compose.yml` file.
 
 ## Dependencies
 
-You need the following global dependencies on your host machine.
+You need the following global dependencies on the host machine.
 
 - Dotnet SDK 8 https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 - docker https://docs.docker.com/get-docker/
 - docker desktop https://docs.docker.com/desktop/release-notes/ (optional)
 - task manager https://taskfile.dev/#/installation (optional)
+
+## Stack
+
+- C# - dotnet 8
+- Postgres
+- Redis
 
 ## Why task manager?
 
